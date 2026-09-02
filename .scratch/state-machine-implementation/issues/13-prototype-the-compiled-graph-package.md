@@ -64,7 +64,25 @@ judgement-call artifact to write it from.
 
 ## Progress
 
-**Claimed and planned 2026-09-02.** The implementation plan is
-[`.scratch/compiled-graph-prototype/PLAN.md`](../../compiled-graph-prototype/PLAN.md). The prototype
-will be implemented from this worktree; the superseded `slice-01-vocabulary-move` implementation
-will not be rebased or merged. Its recon remains prior art read through Git only.
+**Prototyped twice, in parallel and independently, 2026-09-02.** Two sessions claimed this ticket at
+almost the same moment and neither saw the other's code; both are kept deliberately, because two
+concrete layouts are worth more to issue 09's PRD than one.
+
+- **A** — the other session's. Its own plan and judgement calls are in
+  `.scratch/compiled-graph-prototype/`.
+- **B** — branch `proto/evaluator-b`, findings in
+  [`.scratch/evaluator-b/findings.md`](../../evaluator-b/findings.md). Three packages, 21 production
+  files, 100 pure tests in six classes, parity unchanged at 255/24/0/0/1. All of issue 09's shape
+  except the compiled-graph cache, which A built and B deferred.
+
+The two converge on most of the layout — the package split and its seam, the
+`RequiredAuthority`/`DefinitionScope` asymmetry, all four strategies, and both structural gates. Part
+7 of B's findings lists the six places they diverge; **D-1, whether the compiled graph holds bound
+closures or pure data, is the one that has to be decided rather than merged.**
+
+`slice-01-vocabulary-move` was abandoned by both, as this ticket left open. Nothing was rebased or
+cherry-picked from it; its `recon-strategies.md` remains prior art, read through Git only, and B
+records one correction to its §8.
+
+**Not resolved by either session alone.** Choosing between the two prototypes, or taking from both,
+is issue 09's first act.
