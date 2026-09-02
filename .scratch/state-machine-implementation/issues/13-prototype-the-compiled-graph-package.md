@@ -1,7 +1,7 @@
 # Prototype the compiled-graph package
 
 Type: prototype
-Status: open
+Status: claimed
 Blocked by: 08
 
 ## Question
@@ -61,3 +61,10 @@ needs that list amended; `DefinitionScope` staying means its entry stands.
 
 Everything issue 09 already excludes, plus **the PRD itself** — this issue produces the code and the
 judgement-call artifact to write it from.
+
+## Progress
+
+**Claimed and planned 2026-09-02.** The implementation plan is
+[`.scratch/compiled-graph-prototype/PLAN.md`](../../compiled-graph-prototype/PLAN.md). The prototype
+will be implemented from this worktree; the superseded `slice-01-vocabulary-move` implementation
+will not be rebased or merged. Its recon remains prior art read through Git only.
