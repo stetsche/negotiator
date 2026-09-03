@@ -1,7 +1,7 @@
 # Prototype the compiled-graph package
 
 Type: prototype
-Status: open
+Status: resolved
 Blocked by: 08
 
 ## Question
@@ -61,3 +61,39 @@ needs that list amended; `DefinitionScope` staying means its entry stands.
 
 Everything issue 09 already excludes, plus **the PRD itself** — this issue produces the code and the
 judgement-call artifact to write it from.
+
+## Progress
+
+**Claimed and planned 2026-09-02.** Implementation follows
+[`.scratch/compiled-graph-prototype/PLAN.md`](../../compiled-graph-prototype/PLAN.md) in this worktree.
+The superseded `slice-01-vocabulary-move` implementation will not be merged.
+
+## Answer
+
+**Resolved 2026-09-03.** The prototype establishes three packages with one-way dependencies:
+`lifecycle.graph` owns immutable evaluator-ready topology and `RequiredAuthority`;
+`lifecycle.definition` compiles already-materialized package-private entities into graph values and
+caches them by Definition Version row id; `lifecycle.evaluation` owns the stateless evaluator,
+pipeline, typed strategy registries and the four requested strategy types. `DefinitionScope` remains
+package-private in `definition`.
+
+The graph is pure data rather than JPA entities or executable bean closures. Definition-level Guards
+are composed ahead of Transition Guards during graph construction; raw jsonb params bind once through
+the strategy's declared type; direct evaluation and Possible Events share one authority → Information
+Requirement → Guard path; permitted outcomes report ordered Actions without running them.
+
+No repository-backed graph source, production lifecycle-service caller, migration, Spring
+Statemachine deletion or real Information Requirement lookup was added. Those boundaries keep the
+prototype under issue 09's pure/no-I/O gate. Implementation findings and rejected alternatives are
+recorded in
+[judgement-calls.md](../../compiled-graph-prototype/judgement-calls.md).
+
+Verification:
+
+- production compilation passed;
+- 21 focused prototype and structural-gate tests passed together;
+- `ApplicationTest` passed, proving the Spring context folds strategy beans into both registries;
+- two-axis code review completed; its material findings were fixed and the follow-up spec review
+  reported no findings;
+- the full backend suite was started but aborted at the user's request; targeted verification was
+  accepted instead.

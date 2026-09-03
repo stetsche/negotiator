@@ -85,10 +85,13 @@ class DefinitionInertnessGuardTest {
           "ActionWiring",
           "ActionWiringRepository",
           "DefinitionScope",
-          "RequiredAuthority",
           "DefinitionResolver",
           "DefinitionResolverImpl",
-          "DefinitionResolutionException");
+          "DefinitionResolutionException",
+          "MaterializedDefinition",
+          "DefinitionGraphCompiler",
+          "CompiledGraphSource",
+          "CompiledGraphCache");
 
   /**
    * Definition tables whose names exist nowhere else in this repository. A word boundary keeps
