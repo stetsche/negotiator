@@ -27,11 +27,11 @@
               {{ collaborator.name }}
             </span>
             <button
-              v-if="isAuthor || isAdmin"
+              v-if="canRemoveCollaborator(collaborator)"
               type="button"
               class="btn btn-sm btn-link text-danger p-0 flex-shrink-0"
-              title="Remove collaborator"
-              aria-label="Remove collaborator"
+              :title="isSelf(collaborator) ? 'Leave negotiation' : 'Remove collaborator'"
+              :aria-label="isSelf(collaborator) ? 'Leave negotiation' : 'Remove collaborator'"
               @click="promptRemoveCollaborator(collaborator)"
             >
               <i class="bi bi-person-x-fill"></i>
@@ -157,11 +157,13 @@
           :include-attachments="true"
         />
         <TransferButton
+          v-if="isAuthorOrAdmin"
           class="mt-2"
           :negotiation-id="negotiation.id"
           @transfer-negotiation="handleTransferNegotiation"
         />
         <AddCollaboratorButton
+          v-if="isAuthorOrAdmin"
           class="mt-2"
           :negotiation-id="negotiation.id"
           @collaborator-added="handleCollaboratorAdded"
@@ -187,6 +189,7 @@
     v-model:is-open="isRemoveCollaboratorModalOpen"
     :collaborator="collaboratorToRemove"
     :negotiation-id="negotiation.id"
+    :is-self="isRemovingSelf"
     @collaborator-removed="handleCollaboratorRemoved"
   />
 </template>
@@ -208,6 +211,7 @@ import {
 import { apiPaths, getBearerHeaders } from '../config/apiPaths'
 import { useNotificationsStore } from '../store/notifications'
 import { useUserStore } from '../store/user.js'
+import { useRouter } from 'vue-router'
 import TimeStamp from '@/components/ui/TimeStamp.vue'
 import PrimaryButton from '@/components/ui/buttons/PrimaryButton.vue'
 import AddCollaboratorButton from '@/components/AddCollaboratorButton.vue'
@@ -216,6 +220,7 @@ import RemoveCollaboratorModal from '@/components/modals/RemoveCollaboratorModal
 useNegotiationPageStore()
 const notifications = useNotificationsStore()
 const userStore = useUserStore()
+const router = useRouter()
 
 const isEditingDisplayId = ref(false)
 const editedDisplayId = ref('')
@@ -245,6 +250,12 @@ const isAuthor = computed(
   () => userStore.userInfo?.subjectId && userStore.userInfo.subjectId === props.author?.subjectId,
 )
 
+const isAuthorOrAdmin = computed(() => Boolean(isAuthor.value) || props.isAdmin)
+
+const isRemovingSelf = computed(
+  () => Boolean(collaboratorToRemove.value) && isSelf(collaboratorToRemove.value),
+)
+
 onMounted(async () => {
   await fetchCollaborators()
 })
@@ -263,6 +274,14 @@ async function fetchCollaborators() {
   }
 }
 
+function isSelf(collaborator) {
+  return Boolean(userStore.userInfo?.id) && userStore.userInfo.id === collaborator?.id
+}
+
+function canRemoveCollaborator(collaborator) {
+  return isAuthorOrAdmin.value || isSelf(collaborator)
+}
+
 function promptRemoveCollaborator(collaborator) {
   collaboratorToRemove.value = collaborator
   isRemoveCollaboratorModalOpen.value = true
@@ -270,7 +289,13 @@ function promptRemoveCollaborator(collaborator) {
 
 async function handleCollaboratorRemoved(collaborator) {
   emit('collaborator-removed', collaborator)
+  const removedSelf = isSelf(collaborator)
   collaboratorToRemove.value = null
+
+  if (removedSelf && !isAuthorOrAdmin.value) {
+    router.push({ name: 'researcher' })
+    return
+  }
   await fetchCollaborators()
 }
 
