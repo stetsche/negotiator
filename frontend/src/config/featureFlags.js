@@ -4,6 +4,7 @@ const devSettings = {
   networks: true,
   dev_mode: true,
   orgResourceStateOverride: true,
+  collaborators: true,
 }
 
 const prodSettings = {
@@ -12,6 +13,7 @@ const prodSettings = {
   networks: 'FEATURE_FLAG_NETWORKS',
   dev_mode: 'DEV_MODE_PLACEHOLDER',
   orgResourceStateOverride: 'FEATURE_FLAG_ORG_RESOURCE_STATE_OVERRIDE_PLACEHOLDER',
+  collaborators: 'FEATURE_FLAG_COLLABORATORS_PLACEHOLDER',
 }
 
 let allFeatureFlags

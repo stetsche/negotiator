@@ -12,7 +12,7 @@
         <span :style="{ color: uiConfiguration.secondaryTextColor }">{{ author.email }}</span>
       </li>
       <!-- Collaborators list -->
-      <li class="list-group-item p-2">
+      <li v-if="collaboratorsEnabled" class="list-group-item p-2">
         <div class="fw-bold mb-1" :style="{ color: uiConfiguration.primaryTextColor }">
           Collaborators:
         </div>
@@ -163,7 +163,7 @@
           @transfer-negotiation="handleTransferNegotiation"
         />
         <AddCollaboratorButton
-          v-if="isAuthorOrAdmin"
+          v-if="collaboratorsEnabled && isAuthorOrAdmin"
           class="mt-2"
           :negotiation-id="negotiation.id"
           @collaborator-added="handleCollaboratorAdded"
@@ -211,6 +211,7 @@ import {
 import { apiPaths, getBearerHeaders } from '../config/apiPaths'
 import { useNotificationsStore } from '../store/notifications'
 import { useUserStore } from '../store/user.js'
+import { useFeatureFlags } from '../composables/useFeatureFlags.js'
 import { useRouter } from 'vue-router'
 import TimeStamp from '@/components/ui/TimeStamp.vue'
 import PrimaryButton from '@/components/ui/buttons/PrimaryButton.vue'
@@ -220,6 +221,7 @@ import RemoveCollaboratorModal from '@/components/modals/RemoveCollaboratorModal
 useNegotiationPageStore()
 const notifications = useNotificationsStore()
 const userStore = useUserStore()
+const { collaborators: collaboratorsEnabled } = useFeatureFlags()
 const router = useRouter()
 
 const isEditingDisplayId = ref(false)
@@ -257,7 +259,9 @@ const isRemovingSelf = computed(
 )
 
 onMounted(async () => {
-  await fetchCollaborators()
+  if (collaboratorsEnabled) {
+    await fetchCollaborators()
+  }
 })
 
 async function fetchCollaborators() {
